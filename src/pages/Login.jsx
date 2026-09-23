@@ -1,88 +1,152 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import api from "../services/api";
 
 function Login() {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
 
-  const handleLogin = (e) => {
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    setError("");
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const enteredEmail = email.trim().toLowerCase();
-    const enteredPassword = password;
+    const email = formData.email.trim();
+    const password = formData.password;
 
-    if (!enteredEmail || !enteredPassword) {
-      alert("Please enter email and password");
+    if (!email || !password) {
+      setError("Please enter email and password.");
       return;
     }
 
-    // Get saved user
-    const savedUser = JSON.parse(localStorage.getItem("taskTrackerUser"));
-
-    if (!savedUser) {
-      alert("No account found. Please create an account first.");
+    if (!email.includes("@")) {
+      setError("Please enter a valid email address.");
       return;
     }
 
-    const savedEmail = String(savedUser.email || "")
-      .trim()
-      .toLowerCase();
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters.");
+      return;
+    }
 
-    const savedPassword = String(savedUser.password || "");
+    try {
+      setLoading(true);
+      setError("");
 
-    if (
-      savedEmail === enteredEmail &&
-      savedPassword === enteredPassword
-    ) {
-      // Login successful
+      const response = await api.post("/auth/login", {
+        email,
+        password,
+      });
+
+      const data = response.data;
+
+      const token = data.token;
+
+      if (!token) {
+        setError("Login failed. Token was not received.");
+        return;
+      }
+
+      // Save JWT token
+      localStorage.setItem("taskTrackerToken", token);
+
+      // Save logged-in user
+      if (data.user) {
+        localStorage.setItem(
+          "taskTrackerUser",
+          JSON.stringify(data.user)
+        );
+      }
+
       localStorage.setItem("isLoggedIn", "true");
 
-      alert("Login successful!");
-
       navigate("/dashboard");
-    } else {
-      alert("Invalid email or password");
+    } catch (err) {
+      console.error("Login error:", err);
+
+      const message =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        "Invalid email or password.";
+
+      setError(message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="auth-page">
       <div className="auth-card">
+        <div className="auth-icon">✓</div>
+
         <h1>Welcome Back</h1>
 
-        <p className="subtitle">
+        <p className="auth-subtitle">
           Login to your Task Tracker account
         </p>
 
-        <form onSubmit={handleLogin}>
-          <label>Email</label>
+        {error && <div className="error-message">{error}</div>}
 
-          <input
-            type="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="email">Email Address</label>
 
-          <label>Password</label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="Enter your email"
+              value={formData.email}
+              onChange={handleChange}
+              disabled={loading}
+              autoComplete="email"
+            />
+          </div>
 
-          <input
-            type="password"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
 
-          <button type="submit">
-            Login
+            <input
+              id="password"
+              name="password"
+              type="password"
+              placeholder="Enter your password"
+              value={formData.password}
+              onChange={handleChange}
+              disabled={loading}
+              autoComplete="current-password"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="auth-button"
+            disabled={loading}
+          >
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
-        <p className="auth-link">
+        <p className="auth-footer">
           Don't have an account?{" "}
-          <a href="/register">Create Account</a>
+          <Link to="/register">Create Account</Link>
         </p>
       </div>
     </div>

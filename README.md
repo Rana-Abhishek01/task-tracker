@@ -1,84 +1,101 @@
-# 🚀 Task Tracker
+# Task Tracker
 
-A modern and responsive task management application built with React and Vite.
+A full-stack task management application built with React, Vite, Node.js, Express, Prisma, SQLite, and JWT authentication.
 
-Task Tracker helps users create, manage, organize, and track their daily tasks with priorities, due dates, filters, sorting, search, and progress tracking.
+## Features
 
----
+### Authentication
+- User registration
+- User login
+- JWT authentication
+- Protected dashboard
+- Logout
+- Client-side form validation
+- API error handling
 
-## ✨ Features
+### Task Management
+- Create tasks
+- View tasks
+- Edit tasks
+- Delete tasks
+- Mark tasks as completed/pending
+- Task priority
+- Task due dates
+- Search tasks
+- Filter tasks
+- Sort tasks
+- Overdue task detection
+- Progress tracking
+- Empty task state
 
-- 🔐 User Registration
-- 🔑 User Login
-- 👤 User Profile
-- ➕ Add New Tasks
-- ✏️ Edit Tasks
-- 🗑️ Delete Tasks
-- ✅ Complete / Undo Tasks
-- 🎯 Task Priority
-  - Low
-  - Medium
-  - High
-- 📅 Task Due Dates
-- 🔴 Overdue Task Detection
-- 🔎 Search Tasks
-- 🔘 Filter Tasks
-  - All
-  - Pending
-  - Completed
-- ↕️ Task Sorting
-  - Default
-  - Overdue First
-  - High Priority First
-  - Due Date
-  - Newest First
-  - Oldest First
-- 📊 Task Statistics
-- 📈 Task Progress Percentage
-- 🌙 Dark Mode
-- 📱 Responsive Design
-- 💾 Local Storage Data Persistence
-- 👥 User-specific task storage
+### Admin
+- Admin dashboard
+- View all users
+- View all tasks
+- User/task management according to role
 
----
+### UI
+- Responsive design
+- Mobile-friendly layout
+- Dark mode
+- Loading states
+- Clean dashboard interface
 
-## 🛠️ Technologies Used
+## Tech Stack
 
+### Frontend
 - React
 - Vite
 - JavaScript
-- HTML5
-- CSS3
 - React Router
-- LocalStorage
+- Axios
+- CSS
 
----
+### Backend
+- Node.js
+- Express.js
+- Prisma ORM
+- SQLite
+- JWT
+- bcryptjs
+- Jest
+- Supertest
 
-## 📂 Project Structure
+## Project Structure
 
 ```text
 TaskTracker/
 │
-├── public/
+├── backend/
+│   ├── prisma/
+│   │   └── schema.prisma
+│   ├── src/
+│   │   ├── controllers/
+│   │   ├── middleware/
+│   │   ├── routes/
+│   │   ├── app.js
+│   │   └── server.js
+│   ├── tests/
+│   ├── .env.example
+│   └── package.json
 │
 ├── src/
-│   ├── assets/
-│   ├── components/
-│   ├── context/
 │   ├── pages/
 │   │   ├── Dashboard.jsx
 │   │   ├── Login.jsx
 │   │   └── Register.jsx
-│   ├── routes/
 │   ├── services/
-│   ├── utils/
+│   │   └── api.js
+│   ├── test/
+│   │   ├── api/
+│   │   └── components/
 │   ├── App.jsx
 │   ├── index.css
 │   └── main.jsx
 │
+├── .env.example
 ├── .gitignore
 ├── eslint.config.js
-├── index.html
 ├── package.json
 ├── package-lock.json
 ├── README.md

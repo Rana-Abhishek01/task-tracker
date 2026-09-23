@@ -1,0 +1,12 @@
+node_modules
+
+# Environment variables
+.env
+
+# Local database
+prisma/dev.db
+prisma/*.db
+prisma/*.db-journal
+
+# Generated Prisma files
+/generated/prisma
