@@ -8,7 +8,13 @@ const prisma = new PrismaClient();
 // CREATE TASK
 router.post("/", authMiddleware, async (req, res) => {
   try {
-    const { title, description, status } = req.body;
+    const {
+      title,
+      description,
+      status,
+      priority,
+      dueDate,
+    } = req.body;
 
     if (!title || !title.trim()) {
       return res.status(400).json({
@@ -17,11 +23,32 @@ router.post("/", authMiddleware, async (req, res) => {
       });
     }
 
+    const validPriority = ["Low", "Medium", "High"].includes(priority)
+      ? priority
+      : "Medium";
+
+    let parsedDueDate = null;
+
+    if (dueDate) {
+      const date = new Date(dueDate);
+
+      if (Number.isNaN(date.getTime())) {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid due date",
+        });
+      }
+
+      parsedDueDate = date;
+    }
+
     const task = await prisma.task.create({
       data: {
         title: title.trim(),
         description: description || null,
         status: status === "completed" ? "completed" : "pending",
+        priority: validPriority,
+        dueDate: parsedDueDate,
         userId: req.user.id,
       },
     });
@@ -72,7 +99,14 @@ router.get("/", authMiddleware, async (req, res) => {
 router.put("/:id", authMiddleware, async (req, res) => {
   try {
     const taskId = Number(req.params.id);
-    const { title, description, status } = req.body;
+
+    const {
+      title,
+      description,
+      status,
+      priority,
+      dueDate,
+    } = req.body;
 
     const existingTask = await prisma.task.findUnique({
       where: { id: taskId },
@@ -95,6 +129,29 @@ router.put("/:id", authMiddleware, async (req, res) => {
       });
     }
 
+    let parsedDueDate = existingTask.dueDate;
+
+    if (dueDate !== undefined) {
+      if (!dueDate) {
+        parsedDueDate = null;
+      } else {
+        const date = new Date(dueDate);
+
+        if (Number.isNaN(date.getTime())) {
+          return res.status(400).json({
+            success: false,
+            message: "Invalid due date",
+          });
+        }
+
+        parsedDueDate = date;
+      }
+    }
+
+    const validPriority = ["Low", "Medium", "High"].includes(priority)
+      ? priority
+      : existingTask.priority;
+
     const task = await prisma.task.update({
       where: { id: taskId },
       data: {
@@ -107,6 +164,8 @@ router.put("/:id", authMiddleware, async (req, res) => {
           status === "completed" || status === "pending"
             ? status
             : existingTask.status,
+        priority: validPriority,
+        dueDate: parsedDueDate,
       },
     });
 

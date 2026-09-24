@@ -23,6 +23,8 @@ model Task {
   title       String
   description String?
   status      String   @default("pending")
+  priority    String   @default("Medium")
+  dueDate     DateTime?
   createdAt   DateTime @default(now())
 
   userId      Int
