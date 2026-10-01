@@ -16,15 +16,15 @@ describe("Login Page", () => {
     ).toBeInTheDocument();
 
     expect(
-      screen.getByLabelText(/email address/i)
+      screen.getByLabelText("Email Address")
     ).toBeInTheDocument();
 
     expect(
-      screen.getByLabelText(/password/i)
+      screen.getByLabelText("Password", { selector: "input" })
     ).toBeInTheDocument();
 
     expect(
-      screen.getByRole("button", { name: /login/i })
+      screen.getByRole("button", { name: /^login$/i })
     ).toBeInTheDocument();
   });
 

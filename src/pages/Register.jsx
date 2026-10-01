@@ -11,6 +11,7 @@ function Register() {
     password: "",
   });
 
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -73,6 +74,9 @@ function Register() {
         email: "",
         password: "",
       });
+
+      // Hide password after registration
+      setShowPassword(false);
 
       // Go to login after a short delay
       setTimeout(() => {
@@ -140,15 +144,31 @@ function Register() {
           <div style={styles.field}>
             <label style={styles.label}>Password</label>
 
-            <input
-              type="password"
-              name="password"
-              placeholder="Minimum 6 characters"
-              value={formData.password}
-              onChange={handleChange}
-              style={styles.input}
-              autoComplete="new-password"
-            />
+            <div style={styles.passwordWrapper}>
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Minimum 6 characters"
+                value={formData.password}
+                onChange={handleChange}
+                style={styles.passwordInput}
+                autoComplete="new-password"
+              />
+
+              <button
+                type="button"
+                onClick={() =>
+                  setShowPassword((prev) => !prev)
+                }
+                disabled={loading}
+                aria-label={
+                  showPassword ? "Hide password" : "Show password"
+                }
+                style={styles.eyeButton}
+              >
+                {showPassword ? "🙈" : "👁️"}
+              </button>
+            </div>
           </div>
 
           <button
@@ -274,6 +294,38 @@ const styles = {
     color: "#111827",
     background: "#ffffff",
     boxSizing: "border-box",
+  },
+
+  passwordWrapper: {
+    position: "relative",
+    width: "100%",
+  },
+
+  passwordInput: {
+    width: "100%",
+    padding: "13px 48px 13px 14px",
+    border: "1px solid #d1d5db",
+    borderRadius: "10px",
+    outline: "none",
+    fontSize: "15px",
+    color: "#111827",
+    background: "#ffffff",
+    boxSizing: "border-box",
+  },
+
+  eyeButton: {
+    position: "absolute",
+    right: "10px",
+    top: "50%",
+    transform: "translateY(-50%)",
+    border: "none",
+    background: "transparent",
+    cursor: "pointer",
+    padding: "5px",
+    fontSize: "18px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   button: {
