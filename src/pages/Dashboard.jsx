@@ -6,6 +6,7 @@ import {
 } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
+import Layout from "../components/layout/Layout";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -706,113 +707,10 @@ function Dashboard() {
   // UI
   // --------------------------------
   return (
-    <div
-      className={darkMode ? "tt-app dark" : "tt-app"}
-    >
-      <aside className="tt-sidebar">
-        <div className="tt-brand">
-          <div className="tt-brand-icon">✓</div>
-
-          <div>
-            <div className="tt-brand-name">
-              Task<span>Tracker</span>
-            </div>
-
-            <div className="tt-brand-sub">
-              Plan • Focus • Achieve
-            </div>
-          </div>
-        </div>
-
-        <nav className="tt-nav">
-          {[
-            ["⌂", "Dashboard"],
-            ["☷", "My Tasks"],
-            ["□", "Calendar"],
-            ["♙", "All Users"],
-            ["▥", "Analytics"],
-            ["⚙", "Settings"],
-          ].map(([icon, label]) => {
-            const hidden =
-              label === "All Users" &&
-              user?.role !== "admin";
-
-            if (hidden) {
-              return null;
-            }
-
-            return (
-              <button
-                key={label}
-                type="button"
-                className={
-                  activeNav === label
-                    ? "tt-nav-item active"
-                    : "tt-nav-item"
-                }
-                onClick={() => {
-                  setActiveNav(label);
-
-                  if (label === "My Tasks") {
-                    document
-                      .getElementById("tasks-section")
-                      ?.scrollIntoView({
-                        behavior: "smooth",
-                      });
-                  }
-
-                  if (label === "All Users") {
-                    document
-                      .getElementById("users-section")
-                      ?.scrollIntoView({
-                        behavior: "smooth",
-                      });
-                  }
-
-                  if (label === "Calendar") {
-                    document
-                      .getElementById("calendar-section")
-                      ?.scrollIntoView({
-                        behavior: "smooth",
-                      });
-                  }
-
-                  if (label === "Settings") {
-                    setSettingsOpen((value) => !value);
-                  } else {
-                    setSettingsOpen(false);
-                  }
-                }}
-              >
-                <span className="tt-nav-icon">
-                  {icon}
-                </span>
-
-                <span>{label}</span>
-              </button>
-            );
-          })}
-        </nav>
-
-        <div className="tt-sidebar-bottom">
-          <div className="tt-small-steps">
-            <div className="tt-small-title">
-              Small
-              <br />
-              Steps
-            </div>
-
-            <div className="tt-small-sub">
-              Big Results!
-            </div>
-
-            <div className="tt-small-line" />
-
-            <div className="tt-small-moon">●</div>
-          </div>
-        </div>
-      </aside>
-
+    <Layout isAdmin={user?.role === "admin"}>
+      <div
+        className={darkMode ? "tt-app dark" : "tt-app"}
+      >
       <main className="tt-main">
         <header className="tt-topbar">
           <div className="tt-welcome">
@@ -1654,7 +1552,7 @@ function Dashboard() {
 
         .tt-app {
           min-height: 100vh;
-          display: flex;
+          display: block;
           background:
             radial-gradient(
               circle at 75% 15%,
@@ -1895,11 +1793,12 @@ function Dashboard() {
         }
 
         .tt-main {
-          width: calc(100% - 235px);
+          width: 100%;
           padding: 25px 24px 50px;
         }
 
         .tt-topbar {
+          padding-left: 58px;
           position: relative;
           z-index: 50;
           overflow: visible;
@@ -1910,7 +1809,7 @@ function Dashboard() {
           justify-content: space-between;
           gap: 28px;
           margin-bottom: 25px;
-          padding: 14px 16px;
+          padding: 14px 16px 14px 74px;
           border: 1px solid rgba(119, 142, 190, 0.14);
           border-radius: 20px;
           background: linear-gradient(135deg, rgba(17, 34, 69, 0.72), rgba(11, 25, 53, 0.58));
@@ -4165,7 +4064,7 @@ function Dashboard() {
           }
 
           .tt-main {
-            width: calc(100% - 64px);
+            width: 100%;
             padding: 16px 10px 30px;
           }
 
@@ -4537,7 +4436,8 @@ function Dashboard() {
         .tt-app:not(.dark) .tt-profile-form label > span { color:#596a85; }
         .tt-app:not(.dark) .tt-profile-form input { background:#f7f9fd; border-color:#dce3ef; color:#1f2b42; }
       `}</style>
-    </div>
+      </div>
+    </Layout>
   );
 }
 
